@@ -6,10 +6,13 @@ import { tmpdir } from "node:os";
 
 import sharp from "sharp";
 
-const testRoot = realpathSync(mkdtempSync(join(tmpdir(), "openpets-gaze-anchor-install-")));
+const testRoot = realpathSync.native(mkdtempSync(join(tmpdir(), "openpets-gaze-anchor-install-")));
 const userDataPath = join(testRoot, "user-data");
 const petsRoot = join(userDataPath, "pets");
 const fakeHome = join(testRoot, "home");
+const codexHomeMock = `data:text/javascript,${encodeURIComponent(`
+  export const homedir = () => ${JSON.stringify(fakeHome)};
+`)}`;
 const catalogZipUrl = "https://zip.openpets.dev/pets/zip-pet/zip-pet.zip";
 const catalogModule = `data:text/javascript,${encodeURIComponent(`
   export async function getCatalogPet(petId) {
@@ -59,12 +62,13 @@ register(`data:text/javascript,${encodeURIComponent(`
     if (specifier === "./catalog.js" && context.parentURL.endsWith("/pet-installation.js")) {
       return { url: ${JSON.stringify(catalogModule)}, shortCircuit: true };
     }
+    if (specifier === "node:os" && context.parentURL.endsWith("/codex-pets.js")) {
+      return { url: ${JSON.stringify(codexHomeMock)}, shortCircuit: true };
+    }
     return nextResolve(specifier, context);
   }
 `)}`, import.meta.url);
 
-const originalHome = process.env.HOME;
-process.env.HOME = fakeHome;
 const originalFetch = globalThis.fetch;
 let releaseStartupInstallLock = (): void => {};
 
@@ -191,7 +195,5 @@ try {
 } finally {
   releaseStartupInstallLock();
   globalThis.fetch = originalFetch;
-  if (originalHome === undefined) delete process.env.HOME;
-  else process.env.HOME = originalHome;
   rmSync(testRoot, { recursive: true, force: true });
 }

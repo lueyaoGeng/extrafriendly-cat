@@ -24,6 +24,10 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      - name: Use a canonical test temporary directory
+        run: node -e "const fs = require('node:fs'); const catTmp = fs.realpathSync.native(process.env.CAT_CI_TMP); fs.appendFileSync(process.env.GITHUB_ENV, ['TEMP', 'TMP', 'TMPDIR'].map((name) => name + '=' + catTmp).join('\n') + '\n');"
+        env:
+          CAT_CI_TMP: ${{ runner.temp }}
       - run: node scripts/check-friendly-cat-source.mjs
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @open-pets/desktop typecheck

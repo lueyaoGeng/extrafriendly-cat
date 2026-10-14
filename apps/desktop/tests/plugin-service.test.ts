@@ -55,11 +55,11 @@ await scenario("snapshot omits paths and includes manifest config", async ({ ser
 });
 
 await scenario("snapshot exposes declared v3 svg icon data url", async ({ root, service, store }) => {
-  const installPath = join(root, "openpets.reminders");
+  const installPath = join(root, "extrafriendly.cat");
   mkdirSync(join(installPath, "assets"), { recursive: true });
   writeFileSync(join(installPath, "index.js"), "export default {};", "utf8");
   writeFileSync(join(installPath, "assets", "reminders.svg"), "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\"/></svg>", "utf8");
-  addPlugin(store, { id: "openpets.reminders", version: "1.0.0", installPath }, { manifestVersion: 3, id: "openpets.reminders", name: "Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "3.0.0", entry: "index.js", icon: "bell", permissions: [], assets: { icons: { reminders: "assets/reminders.svg" } } });
+  addPlugin(store, { id: "extrafriendly.cat", version: "1.0.0", installPath }, { manifestVersion: 3, id: "extrafriendly.cat", name: "Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "3.0.0", entry: "index.js", icon: "bell", permissions: [], assets: { icons: { reminders: "assets/reminders.svg" } } });
   const snapshot = await service.getSnapshot();
   assert.match(snapshot.plugins[0].iconDataUrl ?? "", /^data:image\/svg\+xml;base64,/);
   assert.equal(Buffer.from((snapshot.plugins[0].iconDataUrl ?? "").split(",")[1] ?? "", "base64").toString("utf8").includes("<svg"), true);
@@ -379,31 +379,39 @@ await localScenario("loadLocal snapshots v3 locale catalogs for translated UI", 
 
 await localScenario("bundled seeding copies manifest and preserves user choices", async ({ userData, root, store }) => {
   const official = join(root, "official");
-  const source = join(official, "openpets.reminders");
-  writeManifest(source, { manifestVersion: 2, id: "openpets.reminders", name: "Quick Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"], configSchema: { minutes: { type: "number", default: 30 } } });
+  const source = join(official, "extrafriendly.cat");
+  writeManifest(source, { manifestVersion: 2, id: "extrafriendly.cat", name: "Quick Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"], configSchema: { minutes: { type: "number", default: 30 } } });
   writeFileSync(join(source, "index.js"), "OpenPetsPlugin.register({ start() {} });\n", "utf8");
   const service = new PluginService({ userDataPath: userData, stateStore: store, runtime: new FakeRuntime() as never, bundledPluginSourceDirs: [official] });
   await service.start();
-  let record = store.getRecord("openpets.reminders");
+  let record = store.getRecord("extrafriendly.cat");
   assert.equal(record?.source, "catalog");
   assert.equal(record?.bundled, true);
   assert.equal(record?.enabled, true);
   assert.equal(readFileSync(join(record?.installPath ?? "", "index.js"), "utf8"), "OpenPetsPlugin.register({ start() {} });\n");
-  store.replaceConfig("openpets.reminders", { minutes: 45 });
-  store.setEnabled("openpets.reminders", false);
-  writeManifest(source, { manifestVersion: 2, id: "openpets.reminders", name: "Quick Reminders", version: "2.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak", "pet:reaction"] });
+  store.replaceConfig("extrafriendly.cat", { minutes: 45 });
+  store.setEnabled("extrafriendly.cat", false);
+  writeManifest(source, { manifestVersion: 2, id: "extrafriendly.cat", name: "Quick Reminders", version: "2.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak", "pet:reaction"] });
   await service.seedBundledPlugins();
-  record = store.getRecord("openpets.reminders");
+  record = store.getRecord("extrafriendly.cat");
   assert.equal(record?.version, "2.0.0");
   assert.equal(record?.enabled, false);
   assert.deepEqual(record?.config, { minutes: 45 });
   assert.deepEqual(record?.approvedPermissions, ["pet:speak", "pet:reaction"]);
 });
 
-await localScenario("bundled defaults enable the companion lineup but not Virtual Pet on a fresh install", async ({ userData, root, store }) => {
+await localScenario("bundled defaults enable only the cat on a fresh install", async ({ userData, root, store }) => {
   const official = join(root, "official");
-  const enabledIds = ["openpets.simple-timer", "openpets.anxiety-aid-tools", "openpets.focus-buddy", "openpets.launch-buddy", "openpets.fortune-cookie"];
-  for (const id of [...enabledIds, "openpets.virtual-pet"]) {
+  const candidates = [
+    "extrafriendly.cat",
+    "openpets.simple-timer",
+    "openpets.anxiety-aid-tools",
+    "openpets.focus-buddy",
+    "openpets.launch-buddy",
+    "openpets.fortune-cookie",
+    "openpets.virtual-pet",
+  ];
+  for (const id of candidates) {
     const source = join(official, id);
     writeManifest(source, { manifestVersion: 2, id, name: id, version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"] });
     writeFileSync(join(source, "index.js"), "OpenPetsPlugin.register({ start() {} });\n", "utf8");
@@ -412,25 +420,25 @@ await localScenario("bundled defaults enable the companion lineup but not Virtua
 
   await service.start();
 
-  for (const id of enabledIds) assert.equal(store.getRecord(id)?.enabled, true, `${id} is enabled on a fresh install`);
-  assert.equal(store.getRecord("openpets.virtual-pet")?.enabled, false);
+  assert.deepEqual(store.listRecords().map((record) => record.id), ["extrafriendly.cat"]);
+  assert.equal(store.getRecord("extrafriendly.cat")?.enabled, true);
 });
 
-await localScenario("bundled Focus Buddy keeps the user's choices across restarts", async ({ userData, root, store }) => {
+await localScenario("bundled cat keeps the user's choices across restarts", async ({ userData, root, store }) => {
   const official = join(root, "official");
-  const source = join(official, "openpets.focus-buddy");
-  writeManifest(source, { manifestVersion: 2, id: "openpets.focus-buddy", name: "Focus Buddy", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"], configSchema: { minutes: { type: "number", default: 25 } } });
+  const source = join(official, "extrafriendly.cat");
+  writeManifest(source, { manifestVersion: 2, id: "extrafriendly.cat", name: "Cat fixture", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"], configSchema: { minutes: { type: "number", default: 25 } } });
   writeFileSync(join(source, "index.js"), "OpenPetsPlugin.register({ start() {} });\n", "utf8");
   const options = { userDataPath: userData, stateStore: store, runtime: new FakeRuntime() as never, bundledPluginSourceDirs: [official] };
   await new PluginService(options).start();
-  store.replaceConfig("openpets.focus-buddy", { minutes: 50 });
-  store.setEnabled("openpets.focus-buddy", false);
+  store.replaceConfig("extrafriendly.cat", { minutes: 50 });
+  store.setEnabled("extrafriendly.cat", false);
 
   await new PluginService(options).start();
 
-  const record = store.getRecord("openpets.focus-buddy");
-  assert.equal(record?.enabled, false, "a disabled Focus Buddy stays disabled after restart");
-  assert.deepEqual(record?.config, { minutes: 50 }, "Focus Buddy settings survive restart");
+  const record = store.getRecord("extrafriendly.cat");
+  assert.equal(record?.enabled, false, "a disabled cat module stays disabled after restart");
+  assert.deepEqual(record?.config, { minutes: 50 }, "cat module settings survive restart");
 });
 
 await localScenario("bundled seeding prunes stale ids and blocks uninstall update", async ({ userData, root, store }) => {
@@ -438,16 +446,16 @@ await localScenario("bundled seeding prunes stale ids and blocks uninstall updat
   const oldManifest = writeManifest(oldInstall, manifest({ id: "openpets.pomodoro" }));
   store.upsertRecord({ id: "openpets.pomodoro", version: "1.0.0", installPath: oldInstall, manifestPath: oldManifest, source: "catalog", enabled: true, approvedPermissions: ["timer", "pet:speak"], config: {} });
   const official = join(root, "official");
-  const source = join(official, "openpets.reminders");
-  writeManifest(source, { manifestVersion: 2, id: "openpets.reminders", name: "Quick Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["network"], network: { hosts: ["api.github.com"] } });
+  const source = join(official, "extrafriendly.cat");
+  writeManifest(source, { manifestVersion: 2, id: "extrafriendly.cat", name: "Quick Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["network"], network: { hosts: ["api.github.com"] } });
   writeFileSync(join(source, "index.js"), "OpenPetsPlugin.register({ start() {} });\n", "utf8");
   const service = new PluginService({ userDataPath: userData, stateStore: store, runtime: new FakeRuntime() as never, bundledPluginSourceDirs: [official] });
   await service.start();
   assert.equal(store.getRecord("openpets.pomodoro"), undefined);
-  assert.equal(store.getRecord("openpets.reminders")?.enabled, true);
-  assert.deepEqual(store.getRecord("openpets.reminders")?.approvedNetworkHosts, ["api.github.com"]);
-  assert.equal((await service.uninstall("openpets.reminders")).ok, false);
-  const update = await service.updateCatalog("openpets.reminders");
+  assert.equal(store.getRecord("extrafriendly.cat")?.enabled, true);
+  assert.deepEqual(store.getRecord("extrafriendly.cat")?.approvedNetworkHosts, ["api.github.com"]);
+  assert.equal((await service.uninstall("extrafriendly.cat")).ok, false);
+  const update = await service.updateCatalog("extrafriendly.cat");
   assert.equal(update.ok, false);
   assert.match(update.error, /Bundled plugins update/);
 });
@@ -482,25 +490,25 @@ await localScenario("bundled seeding rejects plugins root symlink", async ({ use
   mkdirSync(outsideRoot, { recursive: true });
   symlinkSync(outsideRoot, join(userData, "plugins"), "dir");
   const official = join(root, "official");
-  const source = join(official, "openpets.reminders");
-  writeManifest(source, { manifestVersion: 2, id: "openpets.reminders", name: "Quick Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"] });
+  const source = join(official, "extrafriendly.cat");
+  writeManifest(source, { manifestVersion: 2, id: "extrafriendly.cat", name: "Quick Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"] });
   writeFileSync(join(source, "index.js"), "OpenPetsPlugin.register({ start() {} });\n", "utf8");
   const runtime = new FakeRuntime();
   const service = new PluginService({ userDataPath: userData, stateStore: store, runtime: runtime as never, bundledPluginSourceDirs: [official] });
   await service.seedBundledPlugins();
-  assert.equal(store.getRecord("openpets.reminders"), undefined);
-  assert.equal(existsSync(join(outsideRoot, "openpets.reminders")), false);
+  assert.equal(store.getRecord("extrafriendly.cat"), undefined);
+  assert.equal(existsSync(join(outsideRoot, "extrafriendly.cat")), false);
   assert.equal(runtime.logs.some((entry) => entry.message.includes("Bundled plugin seed failed")), true);
 });
 
 await localScenario("start skips bundled seeding when disabled", async ({ userData, root, store }) => {
   const official = join(root, "official");
-  const source = join(official, "openpets.reminders");
-  writeManifest(source, { manifestVersion: 2, id: "openpets.reminders", name: "Quick Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"] });
+  const source = join(official, "extrafriendly.cat");
+  writeManifest(source, { manifestVersion: 2, id: "extrafriendly.cat", name: "Quick Reminders", version: "1.0.0", runtime: "javascript", sdkVersion: "1.0.0", entry: "index.js", permissions: ["pet:speak"] });
   writeFileSync(join(source, "index.js"), "OpenPetsPlugin.register({ start() {} });\n", "utf8");
   const service = new PluginService({ userDataPath: userData, stateStore: store, runtime: new FakeRuntime() as never, bundledPluginSourceDirs: [official], seedBundledPlugins: false });
   await service.start();
-  assert.equal(store.getRecord("openpets.reminders"), undefined);
+  assert.equal(store.getRecord("extrafriendly.cat"), undefined);
 });
 
 await scenario("catalog metadata ignores bundled records", async ({ userData, store, runtime }) => {
