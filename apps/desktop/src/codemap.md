@@ -12,6 +12,7 @@
 - `windows.ts` and `pet-installation.ts`: honor the custom-skin toggle at import/selection boundaries.
 - `tray.ts`: primary cat-settings entry; advanced settings reuse existing windows.
 - `plugin-ai-gateway.ts`: existing provider/credential owner; BigModel GLM-4.7-Flash requests disable default thinking so bounded replies include visible text.
+- `plugin-service.ts`: developer snapshot cleanup uses the platform path separator; a missing snapshot must match its exact expected plugin path before pruning.
 
 ## Responsibility
 

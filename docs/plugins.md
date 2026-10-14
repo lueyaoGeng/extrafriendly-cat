@@ -25,6 +25,9 @@ per reset period. Reminder delivery is independently configurable; minute
 throttling stays a wait message, and notices are excluded from AI history.
 The guide opens only curated official links and the host's encrypted provider
 settings. Quota data reflects gateway responses rather than fabricated counters.
+Developer snapshot pruning checks platform-native directory boundaries. Missing
+snapshots must match the expected `plugins-dev/<id>` path before their record is
+removed; an outside path cannot gain deletion authority through a missing file.
 
 OpenPets plugins are small companion programs that extend the pet: reminders,
 focus timers, a Tamagotchi-style virtual pet, GitHub notifications, and so on.
