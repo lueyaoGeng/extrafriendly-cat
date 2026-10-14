@@ -13,6 +13,7 @@
 - `tray.ts`: primary cat-settings entry; advanced settings reuse existing windows.
 - `plugin-ai-gateway.ts`: existing provider/credential owner; BigModel GLM-4.7-Flash requests disable default thinking so bounded replies include visible text.
 - `plugin-service.ts`: developer snapshot cleanup uses the platform path separator; a missing snapshot must match its exact expected plugin path before pruning.
+- `team-api-client.ts`: retryable enrollment responses received after the bounded completion window report a timeout; cancellation and terminal server errors retain their normal handling.
 
 ## Responsibility
 

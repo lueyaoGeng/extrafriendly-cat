@@ -41,3 +41,5 @@ Cloudflare Worker 配置曾通过 Wrangler4.149.0 deploy --dry-run；这不代�
 公开源码前运行 `node scripts/check-friendly-cat-source.mjs --check-local-key`，检查 Git文件集合没有密钥目录、本机配置或本机 Key；CI 不带 Key，仅检查私密文件排除。源码上传与 Release 二进制发布分开，构建验证通过后再发布安装包。
 
 GitHub推送保护发现上游历史含Google OAuth常量；没有绕过保护。公开仓库采用清理后的独立初始快照，保留MIT许可、原README和固定基线引用。未打包的Calendar Airmail示例已移除硬编码OAuth值。原始上游历史和开发分支仅保留在本机，不推送到公开仓库。
+
+CI扩展检查发现并修复Windows开发快照清理的路径分隔符问题，以及团队注册在截止时刻收到可重试响应却返回原始409的边界问题；后者用受控时钟复现，28项团队行为测试通过。测试夹具改为本产品的默认猫模块，Codex外观导入隔离主目录，CI临时目录使用完整规范路径。删除只断言手写示例、未调用真实代码的旧Cursor检查；保留实际安装/读取/卸载的`agent-setup-cursor`行为测试。

@@ -251,10 +251,12 @@ export class TeamApiClient {
         );
         return parseEnrollmentResult(response.body);
       } catch (error) {
-        if (
-          !isRetryableEnrollmentCompletionError(error)
-          || Date.now() >= deadline
-        ) throw enrollmentDeadlineError(error);
+        if (!isRetryableEnrollmentCompletionError(error)) {
+          throw enrollmentDeadlineError(error);
+        }
+        if (Date.now() >= deadline) {
+          throw new Error("Teams enrollment completion timed out.");
+        }
         await waitForEnrollmentRetry(deadline, signal);
         if (Date.now() >= deadline) throw new Error("Teams enrollment completion timed out.");
       }

@@ -82,7 +82,8 @@ desktop generates an ephemeral proof, sends it with the intent ID, installation
 ID, and display name, and uses that same proof for bounded completion retry as
 part of the single Accept & Enroll action. The API returns the intent expiration
 and the desktop retries lost completion responses with the same proof only until
-that server-defined window ends. Neither the browser token nor the
+that server-defined window ends. A retryable response received after expiry
+reports completion timeout and cannot start another request. Neither the browser token nor the
 proof is stored in desktop state or included in logs; the proof is cleared after
 terminal completion/failure or app shutdown. The browser token authorizes
 progress/status reads only; it cannot confirm or complete enrollment. The API

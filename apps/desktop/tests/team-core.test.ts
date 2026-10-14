@@ -391,24 +391,27 @@ test("Teams enrollment completion retries a lost response with the same proof", 
   assert.equal(calls, 2);
 });
 
-test("Teams enrollment completion respects the server-provided bounded window", async () => {
+test("Teams enrollment completion respects the server-provided bounded window", async (context) => {
   let calls = 0;
+  let clock = Date.now();
+  context.mock.method(Date, "now", () => clock);
   const client = new TeamApiClient({
     baseUrl: "https://teams.example.test/",
     fetchImpl: async () => {
       calls += 1;
+      clock += 30;
       return new Response(
          JSON.stringify({ error: { code: "enrollment_completion_in_progress" } }),
         { status: 409 },
       );
     },
   });
-  const expiresAt = new Date(Date.now() + 20).toISOString();
+  const expiresAt = new Date(clock + 20).toISOString();
   await assert.rejects(
     () => client.completeEnrollment("intent-1", "desktop-proof", "desktop-installation", "Alice desktop", expiresAt),
     /completion timed out/,
   );
-  assert.ok(calls <= 2);
+  assert.equal(calls, 1, "an expired completion window must not start another request");
 });
 
 test("required and optional Team plugin policy never bypasses permission approval", () => {
