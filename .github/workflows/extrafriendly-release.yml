@@ -1,0 +1,63 @@
+name: Publish verified Extrafriendly Cat preview
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: Successful desktop build run ID
+        required: true
+      build_commit:
+        description: Exact commit SHA validated by that run
+        required: true
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      CAT_BUILD_RUN: ${{ inputs.build_run_id }}
+      CAT_BUILD_COMMIT: ${{ inputs.build_commit }}
+      CAT_TAG: v0.2.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify the build's conclusion and source
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$CAT_BUILD_RUN" =~ ^[0-9]+$ ]]
+          [[ "$CAT_BUILD_COMMIT" =~ ^[a-f0-9]{40}$ ]]
+          conclusion=$(gh run view "$CAT_BUILD_RUN" --json conclusion --jq .conclusion)
+          commit=$(gh run view "$CAT_BUILD_RUN" --json headSha --jq .headSha)
+          workflow=$(gh run view "$CAT_BUILD_RUN" --json workflowName --jq .workflowName)
+          [[ "$conclusion" == success && "$commit" == "$CAT_BUILD_COMMIT" && "$workflow" == 'Extrafriendly Cat desktop' ]]
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.build_run_id }}
+          pattern: extrafriendly-*
+          path: release-assets
+      - name: Upload verified packages and publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          if command -v rg >/dev/null; then
+            mapfile -t packages < <(rg --files release-assets -g '*-setup.exe' -g '*.dmg' -g '*.zip' | sort)
+          else
+            mapfile -t packages < <(find release-assets -type f \( -name '*-setup.exe' -o -name '*.dmg' -o -name '*.zip' \) | sort)
+          fi
+          [[ ${#packages[@]} -eq 5 ]]
+          : > SHA256SUMS.txt
+          for package in "${packages[@]}"; do
+            digest=$(sha256sum "$package")
+            printf '%s  %s\n' "${digest%% *}" "$(basename "$package")" >> SHA256SUMS.txt
+          done
+          if gh release view "$CAT_TAG" --json isDraft --jq .isDraft > release-state.txt 2>/dev/null; then
+            [[ "$(cat release-state.txt)" == true ]]
+          else
+            gh release create "$CAT_TAG" --target "$CAT_BUILD_COMMIT" --draft --prerelease --title 'Extrafriendly Cat 0.2.0 试用版' --notes-file RELEASE_NOTES.md
+          fi
+          gh release upload "$CAT_TAG" "${packages[@]}" SHA256SUMS.txt --clobber
+          gh release edit "$CAT_TAG" --draft=false --prerelease --notes-file RELEASE_NOTES.md

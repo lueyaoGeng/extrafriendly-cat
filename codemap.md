@@ -8,6 +8,9 @@ The application built here is Extrafriendly Cat, based on OpenPets MIT commit
 `services/free-gateway` owns fixed free-model inference, Node/Cloudflare adapters and finite shared AI quota.
 `scripts/friendly-cat-assets.mjs` owns original skin generation, and
 `.github/workflows/extrafriendly-desktop.yml` builds Windows/macOS artifacts.
+`.github/workflows/extrafriendly-release.yml` publishes those artifacts only
+after checking the successful build run and exact source SHA. It uploads to a
+draft first, then makes the preview public after every package and checksum succeeds.
 The host keeps existing window, import, secret and IPC ownership.
 `README.md` describes this product and public distribution; `UPSTREAM_README.md`
 preserves the original platform guide and attribution.

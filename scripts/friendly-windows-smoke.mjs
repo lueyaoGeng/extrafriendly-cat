@@ -15,12 +15,19 @@ const appDirectory = join(root, "apps", "desktop");
 const require = createRequire(join(appDirectory, "package.json"));
 const packaged = process.argv.includes("--packaged");
 const liveBigModel = process.argv.includes("--live-bigmodel");
+const executableArgument = process.argv.indexOf("--executable");
+const executablePath = executableArgument === -1
+  ? packaged ? join(appDirectory, "dist-electron", "win-unpacked", "extrafriendly-cat.exe") : require("electron")
+  : resolve(process.argv[executableArgument + 1] || "");
+if (executableArgument !== -1 && (!packaged || !process.argv[executableArgument + 1])) {
+  throw new Error("--executable requires --packaged and an executable path.");
+}
 const output = join(root, "artifacts", packaged ? "windows-packaged-smoke" : "windows-smoke");
 await mkdir(output, { recursive: true });
 const electron = await _electron.launch({
-  executablePath: packaged ? join(appDirectory, "dist-electron", "win-unpacked", "extrafriendly-cat.exe") : require("electron"),
+  executablePath,
   args: packaged ? [] : [appDirectory],
-  cwd: appDirectory,
+  cwd: packaged ? dirname(executablePath) : appDirectory,
   env: { ...process.env, EXTRAFRIENDLY_TEST_PROFILE: join(output, `profile-${Date.now()}`) },
   timeout: 90_000,
 });

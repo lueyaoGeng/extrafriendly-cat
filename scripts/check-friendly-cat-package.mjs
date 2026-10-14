@@ -9,7 +9,14 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const appDirectory = join(root, "apps", "desktop");
 const { listPackage, extractFile } = createRequire(join(appDirectory, "package.json"))("@electron/asar");
-const resources = join(appDirectory, "dist-electron", "win-unpacked", "resources");
+const resourcesArgument = process.argv.indexOf("--resources-dir");
+const installerArgument = process.argv.indexOf("--installer");
+if ((resourcesArgument !== -1 && !process.argv[resourcesArgument + 1]) || (installerArgument !== -1 && !process.argv[installerArgument + 1])) {
+  throw new Error("Package input flags require a path.");
+}
+const resources = resourcesArgument === -1
+  ? join(appDirectory, "dist-electron", "win-unpacked", "resources")
+  : resolve(process.argv[resourcesArgument + 1]);
 const archive = join(resources, "app.asar");
 const sourcePackage = JSON.parse(await readFile(join(appDirectory, "package.json"), "utf8"));
 const shippedPackage = JSON.parse(extractFile(archive, "package.json").toString("utf8"));
@@ -41,7 +48,7 @@ while (directories.length) {
   }
 }
 const installerName = `ExtrafriendlyCat-${sourcePackage.version}-win-x64-setup.exe`;
-const installer = join(appDirectory, "dist-electron", installerName);
+const installer = installerArgument === -1 ? join(appDirectory, "dist-electron", installerName) : resolve(process.argv[installerArgument + 1]);
 const result = {
   checkedAt: new Date().toISOString(), version: shippedPackage.version, filesChecked,
   privatePathsExcluded: true, localKeyChecked: Boolean(localKey),
