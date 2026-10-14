@@ -1,0 +1,14 @@
+{
+  "name": "extrafriendly-cat-free-gateway",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "start": "node mock-server.js",
+    "start:bigmodel": "node node-server.js",
+    "test": "node --test tests/*.test.js",
+    "check": "node --check worker.js && node --check gateway.js && node --test tests/*.test.js",
+    "dev:cloudflare": "npx wrangler@4.149.0 dev",
+    "deploy": "npx wrangler@4.149.0 deploy"
+  }
+}

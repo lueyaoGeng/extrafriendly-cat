@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-CApnF+DV2kt3p+k0HVEcWVjkrCyff6q540CXwC8PjnA='; style-src 'sha256-WeQkDenNpjnXFLfJ4Yp6aHaxUhjWC3fBdNYa473LG6E='; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>我的猫 · Extrafriendly Cat</title>
+  <style>:root { color-scheme: light; font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif; color: #433d36; background: #f7f5ee; --muted: #857d72; --line: #e7e2d6; --green: #657659; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 26px 28px 18px; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 13px; }
+.brand img { width: 49px; height: 49px; }
+h1 { font-size: 21px; margin: 4px 0 0; font-weight: 650; }
+.eyebrow { letter-spacing: .14em; font-size: 10px; font-weight: 650; color: var(--muted); }
+.status { font-size: 11px; color: var(--green); background: #e9eedf; padding: 7px 10px; border-radius: 20px; white-space: nowrap; }
+nav { display: flex; margin: 0 28px; padding-bottom: 10px; border-bottom: 1px solid var(--line); gap: 8px; }
+button, input { font: inherit; }
+button { border: 1px solid var(--line); background: #fffefb; color: inherit; border-radius: 8px; padding: 9px 13px; cursor: pointer; font-size: 12px; }
+button:hover { background: #eeeadf; }
+button:focus-visible, input:focus-visible { outline: 2px solid #7a886b; outline-offset: 3px; }
+button:disabled { cursor: default; opacity: .45; }
+.tab { border-color: transparent; background: transparent; color: var(--muted); font-size: 12px; padding: 9px 12px; }
+.tab.active { color: #433d36; background: #eae6db; }
+.primary { background: var(--green); border-color: var(--green); color: #fff; }
+.primary:hover { background: #536548; }
+.text-button { border: none; background: none; color: var(--green); padding: 3px 0; font-size: 11px; }
+main { padding: 21px 28px 24px; }
+h2 { font-size: 24px; line-height: 1.4; font-weight: 550; margin: 10px 0; letter-spacing: -.025em; }
+h3 { font-size: 14px; margin: 0 0 10px; font-weight: 650; }
+p { font-size: 12px; line-height: 1.85; margin: 8px 0; }
+.welcome { padding: 12px 0 21px; }
+.welcome > p { color: var(--muted); }
+.welcome .primary { margin-top: 8px; }
+.card { background: #fffefb; border: 1px solid var(--line); border-radius: 13px; padding: 18px; margin-bottom: 14px; }
+.card-heading { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 10px; }
+.card-heading h3 { margin: 0; }
+.card-heading span { font-size: 12px; color: var(--green); }
+.care-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.care-grid .card { margin-bottom: 0; }
+.care-grid p { color: var(--muted); font-size: 11px; }
+.care-note { font-size: 11px; color: var(--muted); margin: 12px 2px 20px; }
+progress { width: 100%; height: 7px; appearance: none; border: none; border-radius: 6px; overflow: hidden; }
+progress::-webkit-progress-bar { background: #eeebe2; }
+progress::-webkit-progress-value { background: #a5b092; }
+.subtle { font-size: 10px; color: var(--muted); }
+#weather-text { white-space: pre-line; }
+form, .input-row { display: flex; gap: 8px; margin: 12px 0; }
+input[type="text"], input:not([type]) { background: #fcfbf6; border: 1px solid var(--line); padding: 9px 11px; border-radius: 8px; min-width: 0; flex: 1; width: 100%; font-size: 12px; color: inherit; }
+.city-options { display: grid; gap: 5px; }
+.city-options button { text-align: left; font-size: 11px; }
+.notice { border: 1px solid #dbcaae; background: #f5eddd; border-radius: 9px; padding: 10px 12px; font-size: 11px; }
+.page-title { margin: 9px 0 22px; }
+.page-title > p { color: var(--muted); }
+.record { padding: 24px; }
+.record-art { display: flex; justify-content: space-between; align-items: end; background: #dde3d1; border-radius: 8px; height: 160px; padding: 13px 23px; overflow: hidden; margin-bottom: 21px; }
+.record-art > span { font-size: 38px; font-weight: 300; color: #6c795f; }
+.vinyl { width: 142px; height: 142px; display: grid; place-items: center; border-radius: 50%; background: repeating-radial-gradient(circle, #353633 0 2px, #46473f 3px 4px); transform: rotate(-15deg); }
+.vinyl-label { width: 50px; height: 50px; display: grid; align-content: center; text-align: center; border-radius: 50%; background: #e9d8b6; color: #595141; font-size: 8px; letter-spacing: .12em; }
+.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+.tags span { border: 1px solid var(--line); border-radius: 12px; padding: 3px 8px; font-size: 9px; color: var(--muted); }
+.record h2 { margin: 8px 0 2px; font-size: 28px; }
+.artist { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+.review-copy { font-size: 13px; line-height: 2; }
+.entry-track { padding: 9px 0 14px; color: var(--green); }
+.score-box { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 0; display: flex; flex-wrap: wrap; gap: 7px 13px; align-items: center; margin-bottom: 16px; }
+.score-box strong { font-size: 24px; font-weight: 550; }
+.score-box span { font-size: 10px; color: var(--muted); flex: 1; }
+.listen-links { display: flex; gap: 8px; margin-bottom: 14px; }
+.empty { padding: 35px 10px; color: var(--muted); text-align: center; }
+label { font-size: 12px; }
+.provider-choice { display: flex; align-items: center; gap: 8px; padding: 9px 0; }
+.provider-choice small { color: var(--muted); font-size: 10px; margin-left: 5px; }
+input[type="radio"] { accent-color: var(--green); }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 12px 0; border-top: 1px solid #efede5; }
+.toggle-row:first-child { border-top: none; }
+.toggle-row strong { font-size: 12px; font-weight: 550; }
+.toggle-row p { margin: 3px 0 0; color: var(--muted); font-size: 10px; }
+input[type="checkbox"] { appearance: none; flex: 0 0 auto; width: 32px; height: 19px; border-radius: 15px; background: #d6d2c8; cursor: pointer; position: relative; margin: 0; }
+input[type="checkbox"]::after { content: ""; position: absolute; background: #fff; height: 13px; width: 13px; border-radius: 50%; left: 3px; top: 3px; }
+input[type="checkbox"]:checked { background: #78866a; }
+input[type="checkbox"]:checked::after { left: 16px; }
+input[type="checkbox"]:disabled { opacity: .4; }
+.gentle { background: #eceee3; }
+.gentle p { color: #676a5b; }
+.api-provider { border-top: 1px solid var(--line); padding: 18px 0 8px; }
+.api-provider h3 { margin: 0; }
+.api-provider label { display: block; font-size: 11px; color: var(--muted); margin-top: 12px; }
+.api-provider input { display: block; margin-top: 6px; font-size: 11px; }
+.api-steps { padding-left: 20px; font-size: 12px; line-height: 1.9; }
+.api-steps li { margin-bottom: 6px; }
+.api-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+#quota-banner button { margin-right: 6px; }
+footer { padding: 0 28px 21px; color: #a39b8e; font-size: 10px; display: flex; justify-content: space-between; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+@media (max-width: 460px) { header, main { padding-left: 18px; padding-right: 18px; } nav { margin: 0 18px; gap: 2px; } .tab { padding: 9px 8px; } .status { display: none; } .care-grid { grid-template-columns: 1fr; } h2 { font-size: 21px; } .record-art { height: 135px; } }
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand"><img src="../assets/cat.svg" alt=""><div><span class="eyebrow">EXTRAFRIENDLY CAT</span><h1 id="cat-name">我的猫</h1></div></div>
+    <span class="status">一直在你这边</span>
+  </header>
+  <nav aria-label="我的猫">
+    <button class="tab active" data-tab="home" aria-selected="true">陪你待一会儿</button>
+    <button class="tab" data-tab="music" aria-selected="false">今天听什么</button>
+    <button class="tab" data-tab="api" aria-selected="false">聊天与 API</button>
+    <button class="tab" data-tab="settings" aria-selected="false">设置</button>
+  </nav>
+  <main>
+    <p id="notice" class="notice" role="status" hidden></p>
+    <aside id="quota-banner" class="notice" role="status" hidden><p id="quota-message"></p><button id="quota-api" class="primary">接入自己的免费 API</button><button id="quota-later">稍后再说</button></aside>
+    <section data-page="home">
+      <div class="welcome"><span class="eyebrow">YOUR CAT, YOUR PACE</span><h2>今天也一起慢慢来。</h2><p>想说点什么就点我。没想好，也可以只让我趴在这里。</p><button id="chat" class="primary">和猫聊聊 ↗</button><p id="chat-status" class="subtle"></p></div>
+      <div class="care-grid">
+        <article class="card" id="feeding-card"><div class="card-heading"><h3>饭碗</h3><span id="satiety-label"></span></div><progress id="satiety" max="100" value="80" aria-label="饱腹度"></progress><p id="feeding-description">吃饭是一点小仪式。</p><button id="feed">添一点饭</button></article>
+        <article class="card" id="litter-card"><div class="card-heading"><h3>猫砂盆</h3><span id="cleanliness-label"></span></div><progress id="cleanliness" max="100" value="90" aria-label="清洁度"></progress><p id="litter-description">清清爽爽地陪着你。</p><button id="clean">铲铲猫砂</button></article>
+      </div>
+      <p class="care-note">关掉喂食或铲屎后，数值会暂停。离开时也不会偷偷变差，我对你的喜欢一直都在。</p>
+      <article class="card" id="weather-card"><div class="card-heading"><h3>窗外的天气</h3><button id="weather" class="text-button">刷新</button></div><p id="weather-text">先选一个城市，我再帮你看看。</p><p id="weather-time" class="subtle"></p><form id="city-form"><label for="city-query" class="sr-only">城市名</label><input id="city-query" placeholder="城市名、英文或拼音" maxlength="80" autocomplete="off"><button type="submit">找城市</button></form><div id="cities" class="city-options"></div><p class="subtle">天气来自 Open-Meteo。只使用你选择的城市。</p></article>
+      <article class="card" id="joke-card"><div class="card-heading"><h3>一点小笑话</h3><button id="joke" class="text-button">再来一个</button></div><p id="joke-text">我的待办清单只有两条：陪你。陪你做别的。</p></article>
+    </section>
+    <section data-page="music" hidden>
+      <div class="page-title"><span class="eyebrow" id="album-day">TODAY'S RECORD</span><h2>给今天挑一张唱片。</h2><p>不必有多隆重。戴上耳机，听一会儿就好。</p></div>
+      <article class="record card" id="album-card"><div class="record-art" aria-hidden="true"><div class="vinyl"><div class="vinyl-label">CAT<br>RECORDS</div></div><span id="album-year"></span></div><div id="album-genres" class="tags"></div><h2 id="album-title">唱片正在准备中</h2><p id="album-artist" class="artist"></p><p id="album-recommendation" class="review-copy"></p><p id="album-track" class="entry-track"></p><div class="score-box"><strong id="album-score"></strong><span id="album-source"></span><button id="review-link" class="text-button">查看原始乐评 ↗</button></div><div class="listen-links"><button id="spotify-link" class="primary">Spotify 搜索 ↗</button><button id="netease-link">网易云搜索 ↗</button></div><p class="subtle">平台按钮是搜索入口；请在结果中确认艺人、专辑与版本。评分是媒体原始乐评，推荐语为本应用整理。</p></article>
+      <p id="album-disabled" class="empty" hidden>专辑推荐已暂停。想听的时候，在设置里打开就好。</p>
+    </section>
+    <section data-page="settings" hidden>
+      <div class="page-title"><span class="eyebrow">MAKE ROOM FOR YOUR CAT</span><h2>按你的习惯来。</h2><p>每个功能都可以独立暂停。全部关掉，我就安静地当一只桌面猫。</p></div>
+      <article class="card"><label for="name">给猫一个名字</label><div class="input-row"><input id="name" maxlength="24" placeholder="小猫"><button id="save-name">保存</button></div></article>
+      <article class="card"><h3>聊天服务</h3><p>共享免费服务和自己的 API 都在「聊天与 API」里设置。</p><button id="settings-api">设置聊天 / 获取免费 API</button></article>
+      <article class="card"><h3>可选功能</h3><div id="feature-toggles"></div></article>
+      <article class="card"><h3>外观与声音</h3><div class="toggle-row"><div><strong>猫猫动画</strong><p>关掉后保留静态外观和聊天。</p></div><input type="checkbox" id="animation" aria-label="猫猫动画" disabled></div><div class="toggle-row"><div><strong>自定义猫猫</strong><p>使用自己或 Codex 制作的外观包。</p></div><input type="checkbox" id="customSkins" aria-label="自定义猫猫" disabled></div><button id="skins-settings">挑选 / 导入猫猫 ↗</button><p class="subtle">内置猫猫可以直接选。自定义外观只包含图片和动作描述，不需要运行外观作者的程序。</p></article>
+      <article class="card gentle"><h3>关于我们</h3><p>你忙、忘记喂饭，或者把照料功能关掉，都不会改变我对你的态度。没有好感扣分，也没有生病或死亡惩罚。</p><p>我会支持你。实在不会的事，也会温柔地告诉你。</p></article>
+    </section>
+    <section data-page="api" hidden>
+      <div class="page-title"><span class="eyebrow">LET'S HAVE A LITTLE CHAT</span><h2>想聊的时候，我就在这里。</h2><p>可以使用共享免费服务，也可以接入自己的免费 API。先不设置也没关系。</p><button id="api-later">先陪着我，稍后设置</button></div>
+      <article class="card"><h3>选择聊天服务</h3><label class="provider-choice"><input type="radio" name="provider" value="free"><span>统一免费服务 <small id="free-state">待上线</small></span></label><label class="provider-choice"><input type="radio" name="provider" value="personal"><span>使用我自己的 API <small id="personal-state">尚未配置</small></span></label><button id="api-settings" class="primary">配置个人 API ↗</button><p id="quota-summary" class="subtle"></p><p class="subtle">免费服务受限时会提示，只有你主动选择自己的 API 才会调用它。自己的 API 也可以使用免费模型，费用与限额以服务商控制台为准。</p></article>
+      <article class="card"><h3>获取自己的免费 API</h3><p>下面是国内平台的官方入口。只选明确标为免费的文字聊天模型，免费政策和限额以当前控制台为准。</p><div id="api-providers"></div><p id="api-guide-date" class="subtle"></p></article>
+      <article class="card gentle"><h3>拿到 Key 后，怎么填？</h3><ol class="api-steps"><li>点击上面的「配置个人 API」，在模型服务里新增自定义文本接口，类型选 OpenAI 兼容。</li><li>填入平台的 API 地址、完整模型名，以及你自己的 API Key；保存，并启用它作为文本聊天模型。</li><li>回到这里，主动选择「使用我自己的 API」，再点猫猫开始聊天。</li></ol><p>Key 只填进客户端设置。请不要把它放进外观包或发给别人。</p><p class="subtle">「网页聊天免费」与「API 调用免费」是两件事。注册赠送的试用额度可能到期，接入前请确认模型的输入、输出都免费。</p></article>
+    </section>
+  </main>
+  <footer>一只属于你的猫。<span>Extrafriendly Cat · 0.2</span></footer>
+<script>const bridge = window.openPetsPanel;
+const byId = (id) => document.getElementById(id);
+const post = (type, details = {}) => bridge.postMessage({ type, ...details });
+let snapshot = null;
+let appearance = null;
+let currentTab = "home";
+let weatherLoading = false;
+let dismissedQuota = "";
+const FEATURE_LABELS = {
+  chat: ["聊天陪伴", "点猫猫，打字和它聊聊。"],
+  albums: ["每日专辑", "每天一张唱片，附原始评分与试听入口。"],
+  jokes: ["小笑话", "需要时来一点轻松的话。"],
+  weather: ["天气", "查看所选城市的当前天气和明日预报。"],
+  feeding: ["喂食", "关掉后暂停饱腹度，不积累亏欠。"],
+  litter: ["铲屎", "关掉后暂停清洁度，不积累亏欠。"],
+  sound: ["互动声音", "喂食和铲屎时的轻声音，默认关闭。"],
+  reminders: ["轻提醒", "09:30 推荐当天专辑；照料提示至少间隔四小时。"],
+  apiReminders: ["额度提醒", "共享免费额度剩余 20% 时提示一次，用完后再提示；可以随时关闭。"],
+};
+
+function setTab(tab) {
+  if (!["home", "music", "api", "settings"].includes(tab)) return;
+  currentTab = tab;
+  for (const button of document.querySelectorAll("[data-tab]")) {
+    const active = button.dataset.tab === tab;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  }
+  for (const section of document.querySelectorAll("[data-page]")) section.hidden = section.dataset.page !== tab;
+}
+
+function notice(text) {
+  byId("notice").textContent = text;
+  byId("notice").hidden = !text;
+}
+
+function featureSwitches() {
+  const container = byId("feature-toggles");
+  for (const [key, [title, description]] of Object.entries(FEATURE_LABELS)) {
+    const row = document.createElement("div");
+    row.className = "toggle-row";
+    const copy = document.createElement("div");
+    const strong = document.createElement("strong");
+    strong.textContent = title;
+    const paragraph = document.createElement("p");
+    paragraph.textContent = description;
+    copy.append(strong, paragraph);
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.id = `feature-${key}`;
+    input.setAttribute("aria-label", title);
+    input.addEventListener("change", () => {
+      notice("");
+      post("settings", { patch: { features: { [key]: input.checked } } });
+    });
+    row.append(copy, input);
+    container.append(row);
+  }
+}
+
+function renderAlbum(album, enabled, day) {
+  byId("album-day").textContent = `${day} · TODAY'S RECORD`;
+  byId("album-card").hidden = !enabled || !album;
+  byId("album-disabled").hidden = enabled && Boolean(album);
+  if (!album) return;
+  byId("album-title").textContent = album.title;
+  byId("album-artist").textContent = album.artist;
+  byId("album-year").textContent = album.year;
+  byId("album-recommendation").textContent = album.recommendation;
+  byId("album-track").textContent = `先听这首：${album.entryTrack}`;
+  byId("album-score").textContent = `${album.review.score} / ${album.review.scale}`;
+  byId("album-source").textContent = `${album.review.source} · 乐评发表于 ${album.review.date} · 核对 ${album.review.checkedAt || "2026-10-13"}`;
+  const genres = byId("album-genres");
+  genres.replaceChildren();
+  for (const genre of album.genres) {
+    const tag = document.createElement("span");
+    tag.textContent = genre;
+    genres.append(tag);
+  }
+}
+
+function renderApiGuide(guide) {
+  if (!guide || byId("api-providers").childElementCount) return;
+  for (const provider of guide.providers) {
+    const article = document.createElement("article");
+    article.className = "api-provider";
+    const heading = document.createElement("h3");
+    heading.textContent = provider.name;
+    const description = document.createElement("p");
+    description.textContent = provider.description;
+    const steps = document.createElement("ol");
+    steps.className = "api-steps";
+    for (const step of provider.steps) {
+      const item = document.createElement("li");
+      item.textContent = step;
+      steps.append(item);
+    }
+    article.append(heading, description, steps);
+    for (const [label, value] of [["API 地址 / Base URL", provider.endpoint], ["模型名称", provider.model]]) {
+      const field = document.createElement("label");
+      field.textContent = label;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.readOnly = true;
+      input.value = value;
+      input.setAttribute("aria-label", `${provider.name} ${label}`);
+      input.addEventListener("click", () => input.select());
+      field.append(input);
+      article.append(field);
+    }
+    const links = document.createElement("div");
+    links.className = "api-links";
+    for (const [target, label] of [["platform", "注册 / 控制台 ↗"], ["docs", "官方接入步骤 ↗"], ["source", "免费规则 ↗"]]) {
+      const button = document.createElement("button");
+      button.textContent = label;
+      button.addEventListener("click", () => post("api-guide-link", { providerId: provider.id, target }));
+      links.append(button);
+    }
+    article.append(links);
+    byId("api-providers").append(article);
+  }
+  byId("api-guide-date").textContent = `官方资料核对：${guide.checkedAt}。点击文本框可选中，再按 Ctrl+C / Cmd+C 复制。`;
+}
+
+function renderQuota(value) {
+  const quota = value.freeQuota;
+  const key = quota ? `${quota.resetsAt}:${quota.status}` : "";
+  const warning = quota && ["low", "exhausted"].includes(quota.status);
+  byId("quota-banner").hidden = !warning || value.settings.provider !== "free" || !value.settings.features.chat
+    || !value.settings.features.apiReminders || dismissedQuota === key;
+  byId("quota-message").textContent = value.quotaMessage || "";
+  const summary = quota && Number.isSafeInteger(quota.deviceRemaining)
+    ? `这台设备今天剩余 ${quota.deviceRemaining} 次。额度恢复：${new Date(quota.resetsAt).toLocaleString()}。`
+    : value.gatewayReady ? "发送消息后会显示实际额度。" : "共享免费服务尚未上线。可以先接入自己的免费 API。";
+  byId("quota-summary").textContent = summary;
+}
+
+function render(value) {
+  snapshot = value;
+  const { settings, care, album } = value;
+  byId("cat-name").textContent = `${settings.name} · 我的猫`;
+  if (document.activeElement !== byId("name")) byId("name").value = settings.name;
+  for (const key of Object.keys(FEATURE_LABELS)) byId(`feature-${key}`).checked = settings.features[key];
+  for (const radio of document.querySelectorAll('input[name="provider"]')) radio.checked = radio.value === settings.provider;
+  byId("free-state").textContent = value.gatewayReady ? "已配置服务地址" : "待上线";
+  byId("personal-state").textContent = value.personalReady ? "已配置" : "尚未配置";
+  renderApiGuide(value.apiGuide);
+  renderQuota(value);
+  byId("chat").disabled = !settings.features.chat;
+  byId("chat-status").textContent = !settings.features.chat ? "聊天已暂停。" : settings.provider === "personal"
+    ? (value.personalReady ? "当前使用你的个人 API。" : "个人 API 尚未配置，可以在“聊天与 API”里接入。")
+    : (value.gatewayReady ? "当前使用统一免费服务。" : "免费聊天待上线。可以在“聊天与 API”里获取自己的免费接口。");
+  byId("satiety").value = care.satiety;
+  byId("satiety-label").textContent = settings.features.feeding ? `${Math.round(care.satiety)} / 100` : "已暂停";
+  byId("feeding-description").textContent = settings.features.feeding ? "吃饭是一点小仪式。" : "饭碗先收好，数值停在这里。";
+  byId("feed").disabled = !settings.features.feeding;
+  byId("cleanliness").value = care.cleanliness;
+  byId("cleanliness-label").textContent = settings.features.litter ? `${Math.round(care.cleanliness)} / 100` : "已暂停";
+  byId("litter-description").textContent = settings.features.litter ? "清清爽爽地陪着你。" : "猫砂先收好，数值停在这里。";
+  byId("clean").disabled = !settings.features.litter;
+  byId("weather-card").hidden = !settings.features.weather;
+  byId("joke-card").hidden = !settings.features.jokes;
+  byId("weather").disabled = weatherLoading || !value.location;
+  byId("weather").textContent = weatherLoading ? "查询中…" : "刷新";
+  byId("weather-text").textContent = value.weather?.summary || (value.location ? `${value.location.name}\n点击刷新查看天气。` : "先选一个城市，我再帮你看看。");
+  byId("weather-time").textContent = value.weather
+    ? `${value.weatherFresh ? "已更新" : "旧数据，请刷新"} · ${new Date(value.weather.fetchedAt).toLocaleString()} · 预报日期 ${value.weather.tomorrowDate || "待确认"}`
+    : "";
+  if (typeof value.joke === "string") byId("joke-text").textContent = value.joke;
+  renderAlbum(album, settings.features.albums, value.day);
+  if (Array.isArray(value.cities)) {
+    const cities = byId("cities");
+    cities.replaceChildren();
+    for (const city of value.cities) {
+      const button = document.createElement("button");
+      button.textContent = city.name;
+      button.addEventListener("click", () => post("city-select", { id: city.id }));
+      cities.append(button);
+    }
+  }
+  if (value.error !== undefined) notice(value.error);
+  if (value.tab) setTab(value.tab);
+}
+
+featureSwitches();
+for (const button of document.querySelectorAll("[data-tab]")) button.addEventListener("click", () => setTab(button.dataset.tab));
+for (const action of ["feed", "clean", "chat", "joke", "weather"]) byId(action).addEventListener("click", () => { notice(""); post(action); });
+byId("city-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  notice("正在找城市…");
+  post("city-search", { query: byId("city-query").value });
+});
+byId("save-name").addEventListener("click", () => post("settings", { patch: { name: byId("name").value } }));
+for (const radio of document.querySelectorAll('input[name="provider"]')) radio.addEventListener("change", () => {
+  if (radio.checked) post("settings", { patch: { provider: radio.value } });
+});
+byId("api-settings").addEventListener("click", () => post("host:open", { route: "assistant" }));
+byId("api-later").addEventListener("click", () => setTab("home"));
+byId("settings-api").addEventListener("click", () => setTab("api"));
+byId("quota-api").addEventListener("click", () => setTab("api"));
+byId("quota-later").addEventListener("click", () => {
+  const quota = snapshot?.freeQuota;
+  dismissedQuota = quota ? `${quota.resetsAt}:${quota.status}` : "";
+  byId("quota-banner").hidden = true;
+});
+byId("skins-settings").addEventListener("click", () => post("host:open", { route: "pets" }));
+for (const key of ["animation", "customSkins"]) byId(key).addEventListener("change", () => {
+  if (!appearance) return;
+  post("host:appearance", { animation: byId("animation").checked, customSkins: byId("customSkins").checked });
+});
+for (const [button, target] of [["spotify-link", "spotify"], ["netease-link", "netease"], ["review-link", "review"]]) {
+  byId(button).addEventListener("click", () => {
+    if (snapshot?.album) post("open-link", { albumId: snapshot.album.id, target });
+  });
+}
+bridge.onMessage((message) => {
+  if (message?.type === "snapshot") {
+    if (typeof message.weatherLoading === "boolean") weatherLoading = message.weatherLoading;
+    render(message);
+  } else if (message?.type === "host:state") {
+    appearance = message;
+    for (const key of ["animation", "customSkins"]) {
+      byId(key).checked = Boolean(message[key]);
+      byId(key).disabled = false;
+    }
+    byId("skins-settings").textContent = message.customSkins ? "挑选 / 导入猫猫 ↗" : "挑选内置猫猫 ↗";
+    post("appearance-state", { animation: Boolean(message.animation) });
+  } else if (message?.type === "host:error") {
+    notice(message.message || "设置暂时没有保存，请重试。");
+    post("host:get");
+  }
+});
+setTab(currentTab);
+post("ready");
+post("host:get");
+</script>
+</body>
+</html>

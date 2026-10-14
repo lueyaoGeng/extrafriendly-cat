@@ -1,0 +1,15 @@
+{
+  "manifestVersion": 3,
+  "id": "extrafriendly.cat",
+  "name": "$t:plugin.name",
+  "description": "$t:plugin.description",
+  "version": "0.2.0",
+  "runtime": "javascript",
+  "sdkVersion": "3.0.0",
+  "entry": "index.js",
+  "icon": "heart",
+  "assets": { "icons": { "cat": "assets/cat.svg" } },
+  "permissions": ["pet:speak", "pet:speak:dynamic", "pet:reaction", "pet:interact", "pets:read", "events", "schedule", "storage", "commands", "audio", "ui:panel", "ai", "network", "network:write", "system:openExternal"],
+  "network": { "hosts": ["api.open-meteo.com", "geocoding-api.open-meteo.com"] },
+  "panels": { "home": "panel/index.html" }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://unpkg.com/wrangler@4.149.0/config-schema.json",
+  "name": "extrafriendly-cat-free-gateway",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-13",
+  "workers_dev": true,
+  "ai": { "binding": "AI" },
+  "durable_objects": {
+    "bindings": [{ "name": "SHARED_QUOTA", "class_name": "SharedQuota" }]
+  },
+  "exports": {
+    "SharedQuota": { "type": "durable-object", "storage": "sqlite" }
+  },
+  "vars": {
+    "INFERENCE_PROVIDER": "bigmodel",
+    "FREE_MODEL_CONFIRMED": "",
+    "DEVICE_DAILY_LIMIT": "20",
+    "IP_DAILY_LIMIT": "40",
+    "GLOBAL_DAILY_LIMIT": "200",
+    "DEVICE_MINUTE_LIMIT": "5",
+    "GLOBAL_NEURONS_DAILY_LIMIT": "8000"
+  },
+  "observability": { "enabled": false }
+}

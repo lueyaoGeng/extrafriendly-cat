@@ -1,0 +1,46 @@
+name: Extrafriendly Cat desktop
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            target: --win nsis --x64
+          - runner: macos-15-intel
+            target: --mac dmg zip --x64
+          - runner: macos-15
+            target: --mac dmg zip --arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: node scripts/check-friendly-cat-source.mjs
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @open-pets/desktop typecheck
+      - run: pnpm --filter @open-pets/desktop build
+      - run: node --test services/free-gateway/tests/*.test.js
+      - run: node --test plugins/official/extrafriendly.cat/test.js
+      - run: pnpm --filter @open-pets/desktop test
+      - run: node scripts/check-friendly-cat-content.mjs
+      - run: pnpm --filter @open-pets/desktop exec electron-builder ${{ matrix.target }} --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extrafriendly-${{ matrix.runner }}
+          path: |
+            apps/desktop/dist-electron/*.exe
+            apps/desktop/dist-electron/*.zip
+            apps/desktop/dist-electron/*.dmg
+          if-no-files-found: error
+          retention-days: 7

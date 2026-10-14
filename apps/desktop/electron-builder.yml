@@ -1,0 +1,73 @@
+appId: dev.extrafriendly.cat
+productName: Extrafriendly Cat
+executableName: extrafriendly-cat
+copyright: Copyright © 2026 Extrafriendly Cat; OpenPets contributors (MIT)
+
+directories:
+  output: dist-electron
+
+artifactName: ExtrafriendlyCat-${version}-${os}-${arch}.${ext}
+
+files:
+  - '!**/apikeys/**'
+  - '!**/.env*'
+  - dist/**
+  - control-center-preload.cjs
+  - pet-tts-helper.cjs
+  - plugin-sdk-preload.cjs
+  - plugin-command-form-preload.cjs
+  - panel-preload.cjs
+  - voice-realtime-preload.cjs
+  - assets/**
+  - package.json
+
+extraResources:
+  - from: ../../LICENSE
+    to: LICENSE.OpenPets
+  - from: ../../plugins/official/extrafriendly.cat
+    to: plugins/official/extrafriendly.cat
+
+asar: true
+asarUnpack:
+  - node_modules/**
+npmRebuild: false
+publish: null
+
+toolsets:
+  appimage: 1.0.3
+
+mac:
+  icon: assets/friendly-cat-icon.icns
+  category: public.app-category.utilities
+  extendInfo:
+    NSMicrophoneUsageDescription: OpenPets uses your microphone only for user-initiated one-shot input and realtime voice conversations.
+  target:
+    - dmg
+    - zip
+  # Ad-hoc sign macOS bundles when a Developer ID certificate is unavailable.
+  # Leaving the app bundle fully unsigned can produce Gatekeeper's misleading
+  # "damaged and can't be opened" dialog on Apple Silicon releases.
+  identity: "-"
+  hardenedRuntime: false
+  gatekeeperAssess: false
+
+win:
+  icon: assets/friendly-cat-icon.ico
+  target:
+    - nsis
+  verifyUpdateCodeSignature: false
+
+nsis:
+  artifactName: ExtrafriendlyCat-${version}-win-${arch}-setup.${ext}
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+linux:
+  icon: assets/app-icon.png
+  target:
+    - AppImage
+    - deb
+    - rpm
+    - tar.gz
+  category: Utility
+  maintainer: OpenPets

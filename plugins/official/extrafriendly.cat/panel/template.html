@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>我的猫 · Extrafriendly Cat</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="panel.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="brand"><img src="../assets/cat.svg" alt=""><div><span class="eyebrow">EXTRAFRIENDLY CAT</span><h1 id="cat-name">我的猫</h1></div></div>
+    <span class="status">一直在你这边</span>
+  </header>
+  <nav aria-label="我的猫">
+    <button class="tab active" data-tab="home" aria-selected="true">陪你待一会儿</button>
+    <button class="tab" data-tab="music" aria-selected="false">今天听什么</button>
+    <button class="tab" data-tab="api" aria-selected="false">聊天与 API</button>
+    <button class="tab" data-tab="settings" aria-selected="false">设置</button>
+  </nav>
+  <main>
+    <p id="notice" class="notice" role="status" hidden></p>
+    <aside id="quota-banner" class="notice" role="status" hidden><p id="quota-message"></p><button id="quota-api" class="primary">接入自己的免费 API</button><button id="quota-later">稍后再说</button></aside>
+    <section data-page="home">
+      <div class="welcome"><span class="eyebrow">YOUR CAT, YOUR PACE</span><h2>今天也一起慢慢来。</h2><p>想说点什么就点我。没想好，也可以只让我趴在这里。</p><button id="chat" class="primary">和猫聊聊 ↗</button><p id="chat-status" class="subtle"></p></div>
+      <div class="care-grid">
+        <article class="card" id="feeding-card"><div class="card-heading"><h3>饭碗</h3><span id="satiety-label"></span></div><progress id="satiety" max="100" value="80" aria-label="饱腹度"></progress><p id="feeding-description">吃饭是一点小仪式。</p><button id="feed">添一点饭</button></article>
+        <article class="card" id="litter-card"><div class="card-heading"><h3>猫砂盆</h3><span id="cleanliness-label"></span></div><progress id="cleanliness" max="100" value="90" aria-label="清洁度"></progress><p id="litter-description">清清爽爽地陪着你。</p><button id="clean">铲铲猫砂</button></article>
+      </div>
+      <p class="care-note">关掉喂食或铲屎后，数值会暂停。离开时也不会偷偷变差，我对你的喜欢一直都在。</p>
+      <article class="card" id="weather-card"><div class="card-heading"><h3>窗外的天气</h3><button id="weather" class="text-button">刷新</button></div><p id="weather-text">先选一个城市，我再帮你看看。</p><p id="weather-time" class="subtle"></p><form id="city-form"><label for="city-query" class="sr-only">城市名</label><input id="city-query" placeholder="城市名、英文或拼音" maxlength="80" autocomplete="off"><button type="submit">找城市</button></form><div id="cities" class="city-options"></div><p class="subtle">天气来自 Open-Meteo。只使用你选择的城市。</p></article>
+      <article class="card" id="joke-card"><div class="card-heading"><h3>一点小笑话</h3><button id="joke" class="text-button">再来一个</button></div><p id="joke-text">{{INITIAL_JOKE}}</p></article>
+    </section>
+    <section data-page="music" hidden>
+      <div class="page-title"><span class="eyebrow" id="album-day">TODAY'S RECORD</span><h2>给今天挑一张唱片。</h2><p>不必有多隆重。戴上耳机，听一会儿就好。</p></div>
+      <article class="record card" id="album-card"><div class="record-art" aria-hidden="true"><div class="vinyl"><div class="vinyl-label">CAT<br>RECORDS</div></div><span id="album-year"></span></div><div id="album-genres" class="tags"></div><h2 id="album-title">唱片正在准备中</h2><p id="album-artist" class="artist"></p><p id="album-recommendation" class="review-copy"></p><p id="album-track" class="entry-track"></p><div class="score-box"><strong id="album-score"></strong><span id="album-source"></span><button id="review-link" class="text-button">查看原始乐评 ↗</button></div><div class="listen-links"><button id="spotify-link" class="primary">Spotify 搜索 ↗</button><button id="netease-link">网易云搜索 ↗</button></div><p class="subtle">平台按钮是搜索入口；请在结果中确认艺人、专辑与版本。评分是媒体原始乐评，推荐语为本应用整理。</p></article>
+      <p id="album-disabled" class="empty" hidden>专辑推荐已暂停。想听的时候，在设置里打开就好。</p>
+    </section>
+    <section data-page="settings" hidden>
+      <div class="page-title"><span class="eyebrow">MAKE ROOM FOR YOUR CAT</span><h2>按你的习惯来。</h2><p>每个功能都可以独立暂停。全部关掉，我就安静地当一只桌面猫。</p></div>
+      <article class="card"><label for="name">给猫一个名字</label><div class="input-row"><input id="name" maxlength="24" placeholder="小猫"><button id="save-name">保存</button></div></article>
+      <article class="card"><h3>聊天服务</h3><p>共享免费服务和自己的 API 都在「聊天与 API」里设置。</p><button id="settings-api">设置聊天 / 获取免费 API</button></article>
+      <article class="card"><h3>可选功能</h3><div id="feature-toggles"></div></article>
+      <article class="card"><h3>外观与声音</h3><div class="toggle-row"><div><strong>猫猫动画</strong><p>关掉后保留静态外观和聊天。</p></div><input type="checkbox" id="animation" aria-label="猫猫动画" disabled></div><div class="toggle-row"><div><strong>自定义猫猫</strong><p>使用自己或 Codex 制作的外观包。</p></div><input type="checkbox" id="customSkins" aria-label="自定义猫猫" disabled></div><button id="skins-settings">挑选 / 导入猫猫 ↗</button><p class="subtle">内置猫猫可以直接选。自定义外观只包含图片和动作描述，不需要运行外观作者的程序。</p></article>
+      <article class="card gentle"><h3>关于我们</h3><p>你忙、忘记喂饭，或者把照料功能关掉，都不会改变我对你的态度。没有好感扣分，也没有生病或死亡惩罚。</p><p>我会支持你。实在不会的事，也会温柔地告诉你。</p></article>
+    </section>
+    <section data-page="api" hidden>
+      <div class="page-title"><span class="eyebrow">LET'S HAVE A LITTLE CHAT</span><h2>想聊的时候，我就在这里。</h2><p>可以使用共享免费服务，也可以接入自己的免费 API。先不设置也没关系。</p><button id="api-later">先陪着我，稍后设置</button></div>
+      <article class="card"><h3>选择聊天服务</h3><label class="provider-choice"><input type="radio" name="provider" value="free"><span>统一免费服务 <small id="free-state">待上线</small></span></label><label class="provider-choice"><input type="radio" name="provider" value="personal"><span>使用我自己的 API <small id="personal-state">尚未配置</small></span></label><button id="api-settings" class="primary">配置个人 API ↗</button><p id="quota-summary" class="subtle"></p><p class="subtle">免费服务受限时会提示，只有你主动选择自己的 API 才会调用它。自己的 API 也可以使用免费模型，费用与限额以服务商控制台为准。</p></article>
+      <article class="card"><h3>获取自己的免费 API</h3><p>下面是国内平台的官方入口。只选明确标为免费的文字聊天模型，免费政策和限额以当前控制台为准。</p><div id="api-providers"></div><p id="api-guide-date" class="subtle"></p></article>
+      <article class="card gentle"><h3>拿到 Key 后，怎么填？</h3><ol class="api-steps"><li>点击上面的「配置个人 API」，在模型服务里新增自定义文本接口，类型选 OpenAI 兼容。</li><li>填入平台的 API 地址、完整模型名，以及你自己的 API Key；保存，并启用它作为文本聊天模型。</li><li>回到这里，主动选择「使用我自己的 API」，再点猫猫开始聊天。</li></ol><p>Key 只填进客户端设置。请不要把它放进外观包或发给别人。</p><p class="subtle">「网页聊天免费」与「API 调用免费」是两件事。注册赠送的试用额度可能到期，接入前请确认模型的输入、输出都免费。</p></article>
+    </section>
+  </main>
+  <footer>一只属于你的猫。<span>Extrafriendly Cat · 0.2</span></footer>
+</body>
+</html>

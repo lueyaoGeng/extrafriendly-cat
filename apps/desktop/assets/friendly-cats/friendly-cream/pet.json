@@ -1,0 +1,11 @@
+{
+  "id": "friendly-cream",
+  "displayName": "奶油猫",
+  "description": "一只愿意陪你过日子的猫。原创几何外观，支持呼吸、眨眼、挥爪和跟随视线。",
+  "spritesheetPath": "spritesheet.webp",
+  "spriteVersionNumber": 2,
+  "gazeAnchor": {
+    "x": 0.5,
+    "y": 0.52
+  }
+}
