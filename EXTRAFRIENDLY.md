@@ -40,9 +40,9 @@ $env:ELECTRON_BUILDER_CACHE='D:\My Project\extrafriendly-cat\artifacts\builder-c
 pnpm --filter @open-pets/desktop exec electron-builder --win nsis --x64 '-c.win.signAndEditExecutable=false' --publish never
 ```
 
-将 `nsis` 改成 `dir` 可生成免安装目录包。公开发布前准备自己的签名和下载渠道。
+将 `nsis` 改成 `dir` 可生成免安装目录包。当前未签名试用包已在 [0.2.0 Release](https://github.com/lueyaoGeng/extrafriendly-cat/releases/tag/v0.2.0) 公开，长期发行仍需准备自己的签名。
 
-macOS：构建流程在 `.github/workflows/extrafriendly-desktop.yml`，分别生成 Intel/Apple Silicon ZIP、DMG。需要在 Mac runner 上运行并补真实鼠标、透明点击穿透和休眠测试；Windows 的成功不能代替这些验证。当前尚未实机验证 Mac。
+macOS：构建流程在 `.github/workflows/extrafriendly-desktop.yml`，Intel 与 Apple Silicon 的完整 CI 检查、ZIP 和 DMG 打包均已通过，预览包与校验值已随 0.2.0 Release 公开。构建源为 `6ee0d8bc5f94b22c891bffa867e4eeb9c1792f45`，[三平台 CI 记录](https://github.com/lueyaoGeng/extrafriendly-cat/actions/runs/38522608465)可查。Mac 包仅作 ad-hoc 签名，未公证；真实鼠标、透明点击穿透、休眠和安装仍需实体 Mac 验收。
 
 免费网关的本地运行、智谱真实接口、配额与 Cloudflare 备选部署步骤见 [网关说明](services/free-gateway/README.md)。已验证 Node HTTP 网关到智谱的真实免费调用；模拟模式仍明确标注为非 AI。公网部署需要稳定的 HTTPS 地址和持久化额度存储，再配置到猫模块并重建。阿里云 FC 试用超额会自动计费，ESA 免费函数的临时预览地址仅有效 60 分钟，本次没有开通收费资源。没有共享密钥嵌入客户端。
 

@@ -10,7 +10,7 @@
 
 ## 下载与使用
 
-从 [Releases](https://github.com/lueyaoGeng/extrafriendly-cat/releases) 下载 Windows x64 试用安装包。0.2.0 的 Windows 原生交互与真实免费模型聊天已在本机验证；安装包未签名。macOS Intel/Apple Silicon 提供构建流程，真实 Mac 交互尚未验收。
+从 [0.2.0 试用版](https://github.com/lueyaoGeng/extrafriendly-cat/releases/tag/v0.2.0) 下载 Windows x64 安装包，或 macOS Intel/Apple Silicon 的 ZIP、DMG 预览包。公开的 Windows 安装包已完成安装、原生交互、真实免费模型聊天和卸载验证；安装包未签名。macOS 两种架构均已通过 CI 检查与打包，尚未进行实体 Mac 交互验收，也未完成签名公证。每个下载文件的校验值见 Release 中的 `SHA256SUMS.txt`。
 
 首次打开会显示「聊天与 API」引导，按官方步骤创建自己的免费 Key、配置文本模型，再主动选择个人 API。推荐 `glm-4-flash-250414`，地址 `https://open.bigmodel.cn/api/paas/v4`；模型价格和频率限制以智谱当前控制台为准。也可以跳过设置，先让猫陪着你。
 
@@ -41,7 +41,7 @@ node --test plugins/official/extrafriendly.cat/test.js services/free-gateway/tes
 pnpm --filter @open-pets/desktop check
 ```
 
-当前27项猫模块、22项网关测试，以及原生 Windows 验证已通过。全量上游测试在本机遇到符号链接权限限制，相关测试独立通过；CI 会补平台检查。完整证据和已知限制见 [VALIDATION.md](VALIDATION.md)。
+当前27项猫模块、22项网关测试，以及原生 Windows 验证已通过。Windows x64、macOS Intel 和 Apple Silicon 的[完整 CI 检查与打包](https://github.com/lueyaoGeng/extrafriendly-cat/actions/runs/38522608465)均已通过，包含桌面行为、合同和构建资源检查。发布包来自固定提交 `6ee0d8b`；完整证据和已知限制见 [VALIDATION.md](VALIDATION.md)。
 
 Windows/macOS 打包见 [EXTRAFRIENDLY.md](EXTRAFRIENDLY.md) 与 `.github/workflows/extrafriendly-desktop.yml`。免费网关的 Node/Cloudflare 适配、固定免费模型、原子额度和公开部署限制见 [网关说明](services/free-gateway/README.md)。
 
